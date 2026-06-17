@@ -1,0 +1,56 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #020817;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.app-header {
+  flex-shrink: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.header-content {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 0.8rem;
+  color: #475569;
+  margin: 0;
+}
+
+.app-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0;
+  overflow: hidden;
+}
+
+.chart-section {
+  padding: 20px;
+  min-height: 0;
+  border-right: 1px solid #1e293b;
+}
+
+.panel-section {
+  padding: 16px;
+  overflow: hidden;
+  background: #0a1628;
+}

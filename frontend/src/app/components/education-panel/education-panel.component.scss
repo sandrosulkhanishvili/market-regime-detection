@@ -1,0 +1,143 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+}
+
+// ── Regime Card ──────────────────────────────────────────────────────────────
+.regime-card {
+  background: #0f172a;
+  border: 1px solid #22c55e;
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.5s ease;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin: 0 0 10px;
+}
+
+.regime-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  transition: background 0.5s, color 0.5s;
+}
+
+.regime-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.regime-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+// ── Info Blocks ──────────────────────────────────────────────────────────────
+.info-block {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+
+  h3 {
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    margin: 0 0 10px;
+  }
+
+  p {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+
+    strong { color: #e2e8f0; }
+  }
+}
+
+.scatter-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+.dot-example {
+  &.bull   { color: #22c55e; }
+  &.normal { color: #3b82f6; }
+  &.bear   { color: #ef4444; }
+}
+
+// ── Pipeline Steps ───────────────────────────────────────────────────────────
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  .step-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong {
+    display: block;
+    font-size: 0.83rem;
+    color: #e2e8f0;
+    margin-bottom: 2px;
+  }
+
+  p {
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+  }
+}

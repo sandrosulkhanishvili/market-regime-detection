@@ -1,0 +1,28 @@
+<div class="app-shell">
+
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">Market Regime Detection</h1>
+      <p class="app-subtitle">S&amp;P 500 · K-Means Clustering · 2000 – present</p>
+    </div>
+  </header>
+
+  <main class="app-body">
+
+    <!-- Left: the chart takes up the most space -->
+    <section class="chart-section">
+      <app-regime-chart
+        (currentRegimeChange)="currentRegime = $event">
+      </app-regime-chart>
+    </section>
+
+    <!-- Right: the educational sidebar -->
+    <aside class="panel-section">
+      <app-education-panel
+        [currentRegime]="currentRegime">
+      </app-education-panel>
+    </aside>
+
+  </main>
+
+</div>

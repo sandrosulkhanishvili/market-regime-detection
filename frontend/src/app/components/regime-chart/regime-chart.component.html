@@ -1,0 +1,28 @@
+<div class="chart-wrapper">
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="state-overlay">
+    <div class="spinner"></div>
+    <p>Fetching S&P 500 data and running K-Means...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="state-overlay error">
+    <p>Could not reach the API at localhost:8000.</p>
+    <small>Make sure <code>uvicorn main:app --reload</code> is running in your backend terminal.</small>
+  </div>
+
+  <!-- Legend -->
+  <div *ngIf="!loading && !error" class="legend">
+    <span *ngFor="let entry of [0, 1, 2]" class="legend-item">
+      <span class="dot" [style.background]="regimeConfig[entry].color"></span>
+      {{ regimeConfig[entry].label }}
+    </span>
+  </div>
+
+  <!-- The chart canvas — Chart.js renders into this element -->
+  <div class="canvas-container">
+    <canvas #chartCanvas></canvas>
+  </div>
+
+</div>

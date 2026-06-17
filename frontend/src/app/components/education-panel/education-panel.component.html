@@ -1,0 +1,63 @@
+<aside class="panel">
+
+  <!-- Current Regime Card -->
+  <section class="regime-card" [style.border-color]="currentInfo.color">
+    <h3 class="card-title">Current Market Regime</h3>
+    <div class="regime-badge" [style.background]="currentInfo.color + '22'" [style.color]="currentInfo.color">
+      {{ currentInfo.label }}
+    </div>
+    <p class="regime-desc">{{ currentInfo.description }}</p>
+    <div class="regime-stats">
+      <div class="stat">
+        <span class="stat-label">Avg Daily Return</span>
+        <span class="stat-value" [style.color]="currentInfo.color">{{ currentInfo.avgReturn }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Avg Volatility</span>
+        <span class="stat-value">{{ currentInfo.avgVolatility }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- What is a Market Regime? -->
+  <section class="info-block">
+    <h3>What is a Market Regime?</h3>
+    <p>
+      Financial markets don't behave the same way all the time. They switch between
+      distinct <strong>regimes</strong> — persistent states with different risk/return profiles.
+      Identifying the current regime helps investors adjust strategy: ride bull markets,
+      hedge in crises, and stay patient in sideways periods.
+    </p>
+  </section>
+
+  <!-- How does K-Means work? -->
+  <section class="info-block">
+    <h3>How does K-Means find regimes?</h3>
+    <p>
+      Imagine plotting every trading day as a dot on a 2D chart: X = daily return,
+      Y = volatility. Days with similar behavior cluster together visually.
+      K-Means automates this: it places 3 "center points" (centroids) and assigns each
+      dot to its nearest center — no human labeling required.
+    </p>
+    <div class="scatter-hint">
+      <div class="dot-example bull">● Bull days</div>
+      <div class="dot-example normal">● Normal days</div>
+      <div class="dot-example bear">● Crisis days</div>
+    </div>
+  </section>
+
+  <!-- Pipeline Steps -->
+  <section class="info-block">
+    <h3>The Pipeline — Step by Step</h3>
+    <ol class="steps">
+      <li *ngFor="let step of steps" class="step">
+        <span class="step-icon">{{ step.icon }}</span>
+        <div>
+          <strong>{{ step.title }}</strong>
+          <p>{{ step.detail }}</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+</aside>
