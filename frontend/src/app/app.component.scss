@@ -34,7 +34,7 @@
   margin: 0;
 }
 
-// ── Loading / Error ──────────────────────────────────────────────────────────
+// ── Loading / Error ───────────────────────────────────────────────────────────
 .full-overlay {
   flex: 1;
   display: flex;
@@ -81,10 +81,42 @@
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid #1e293b;
-  padding: 16px 20px;
-  gap: 12px;
+  padding: 12px 20px 16px;
+  gap: 10px;
 }
 
+// ── Range Buttons ─────────────────────────────────────────────────────────────
+.range-bar {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.range-btn {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit;
+
+  &:hover {
+    background: #1e293b;
+    color: #94a3b8;
+  }
+
+  &.active {
+    background: #1e40af;
+    border-color: #3b82f6;
+    color: #e2e8f0;
+  }
+}
+
+// ── Chart & Timeline ─────────────────────────────────────────────────────────
 .chart-section {
   flex: 1;
   min-height: 0;

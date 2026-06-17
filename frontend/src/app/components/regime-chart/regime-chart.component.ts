@@ -8,7 +8,14 @@ import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
 
 Chart.register(...registerables);
 
-const SAMPLE_EVERY = 3;
+// Adaptive sampling: show every point for short ranges, thin out for large ones.
+// Without this, 1W (5 points) would be sampled to 1-2 points and the chart
+// would render nearly empty.
+function sampleRate(n: number): number {
+  if (n <= 300)  return 1;   // 1D / 1W / 1M / 6M — show everything
+  if (n <= 1000) return 2;   // 1Y / 5Y partial
+  return 3;                  // 5Y full / MAX
+}
 
 @Component({
   selector: 'app-regime-chart',
@@ -42,7 +49,8 @@ export class RegimeChartComponent implements OnChanges, AfterViewInit, OnDestroy
   // like subscribing to an Observable of input values.
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data.length) {
-      this.sampledData = this.data.filter((_, i) => i % SAMPLE_EVERY === 0);
+      const rate = sampleRate(this.data.length);
+      this.sampledData = this.data.filter((_, i) => i % rate === 0);
       if (this.viewReady) {
         this.chart?.destroy();
         this.buildChart();
