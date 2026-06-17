@@ -7,20 +7,34 @@
     </div>
   </header>
 
-  <main class="app-body">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="full-overlay">
+    <div class="spinner"></div>
+    <p>Fetching S&amp;P 500 data and running K-Means...</p>
+  </div>
 
-    <!-- Left: the chart takes up the most space -->
-    <section class="chart-section">
-      <app-regime-chart
-        (currentRegimeChange)="currentRegime = $event">
-      </app-regime-chart>
+  <!-- Error state -->
+  <div *ngIf="error" class="full-overlay error">
+    <p>Could not reach the API at localhost:8000.</p>
+    <small>Make sure <code>uvicorn main:app --reload</code> is running in your backend terminal.</small>
+  </div>
+
+  <main *ngIf="!loading && !error" class="app-body">
+
+    <!-- Left: chart + timeline bar -->
+    <section class="left-column">
+      <div class="chart-section">
+        <app-regime-chart [data]="data"></app-regime-chart>
+      </div>
+      <div class="timeline-section">
+        <app-regime-timeline [data]="data"></app-regime-timeline>
+      </div>
     </section>
 
-    <!-- Right: the educational sidebar -->
-    <aside class="panel-section">
-      <app-education-panel
-        [currentRegime]="currentRegime">
-      </app-education-panel>
+    <!-- Right: scrollable sidebar -->
+    <aside class="right-column">
+      <app-education-panel [currentRegime]="currentRegime"></app-education-panel>
+      <app-regime-stats [data]="data"></app-regime-stats>
     </aside>
 
   </main>

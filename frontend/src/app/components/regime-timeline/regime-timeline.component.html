@@ -1,0 +1,14 @@
+<div class="timeline-wrapper">
+  <p class="timeline-label">Regime Timeline</p>
+  <div class="bar-container">
+    <canvas #timelineCanvas></canvas>
+  </div>
+  <div class="year-axis">
+    <span
+      *ngFor="let yl of yearLabels"
+      class="year-tick"
+      [style.left.%]="yl.pct">
+      {{ yl.label }}
+    </span>
+  </div>
+</div>
