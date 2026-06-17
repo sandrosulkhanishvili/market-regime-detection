@@ -1,6 +1,7 @@
 import {
   Component, Input, OnChanges, AfterViewInit,
-  ViewChild, ElementRef, SimpleChanges, HostListener
+  ViewChild, ElementRef, SimpleChanges, HostListener,
+  ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
@@ -16,14 +17,23 @@ export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
   @ViewChild('timelineCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   @Input() data: RegimeDay[] = [];
 
-  // Year labels to render below the bar (sampled every 2 years)
   yearLabels: { label: string; pct: number }[] = [];
 
   private viewReady = false;
 
+  // ChangeDetectorRef lets us manually tell Angular "re-check this component now".
+  // We need this because ngAfterViewInit fires AFTER Angular's change detection pass,
+  // so any property changes made inside it would trigger NG0100 without this call.
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngAfterViewInit(): void {
     this.viewReady = true;
-    if (this.data.length) this.draw();
+    if (this.data.length) {
+      this.draw();
+      // Explicitly run change detection so Angular sees yearLabels update
+      // without complaining that it changed after the check.
+      this.cdr.detectChanges();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -32,7 +42,6 @@ export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  // Redraw on window resize so the canvas stays sharp
   @HostListener('window:resize')
   onResize(): void {
     if (this.data.length && this.viewReady) this.draw();
@@ -41,7 +50,6 @@ export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
   private draw(): void {
     const canvas = this.canvasRef.nativeElement;
     const container = canvas.parentElement!;
-    // Match canvas resolution to actual pixel width (prevents blurry canvas)
     const dpr = window.devicePixelRatio || 1;
     const w = container.offsetWidth;
     const h = container.offsetHeight;
@@ -55,24 +63,22 @@ export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
 
     const n = this.data.length;
 
-    // Draw one colored rect per day.
-    // dayWidth might be a fraction — Math.ceil avoids 1-pixel gaps between rects.
     this.data.forEach((day, i) => {
       const x = (i / n) * w;
       const nextX = ((i + 1) / n) * w;
-      ctx.fillStyle = REGIME_CONFIG[day.regime].color + 'cc'; // slight transparency
+      ctx.fillStyle = REGIME_CONFIG[day.regime].color + 'cc';
       ctx.fillRect(x, 0, Math.ceil(nextX - x), h);
     });
 
-    // Compute year label positions as % of total width for the template to render
-    this.yearLabels = [];
+    const labels: { label: string; pct: number }[] = [];
     let lastYear = '';
     this.data.forEach((day, i) => {
       const year = day.date.slice(0, 4);
       if (year !== lastYear && parseInt(year) % 2 === 0) {
         lastYear = year;
-        this.yearLabels.push({ label: year, pct: (i / n) * 100 });
+        labels.push({ label: year, pct: (i / n) * 100 });
       }
     });
+    this.yearLabels = labels;
   }
 }

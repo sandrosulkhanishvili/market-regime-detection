@@ -43,6 +43,13 @@ export class AppComponent implements OnInit {
   readonly ranges: DateRange[] = ['1D', '1W', '1M', '6M', '1Y', '5Y', 'MAX'];
   selectedRange: DateRange = 'MAX';
 
+  // chartData is a plain property, NOT a getter.
+  // A getter calls .slice() and returns a new array reference on every change
+  // detection cycle, which causes RegimeChartComponent's ngOnChanges to fire
+  // continuously and destroy/rebuild the chart on every tick.
+  // As a plain property it only changes when we explicitly assign it.
+  chartData: RegimeDay[] = [];
+
   constructor(private regimeService: RegimeService) {}
 
   ngOnInit(): void {
@@ -50,6 +57,7 @@ export class AppComponent implements OnInit {
       next: (days) => {
         this.data = days;
         this.currentRegime = days[days.length - 1].regime;
+        this.chartData = days; // initial view = MAX
         this.loading = false;
       },
       error: () => {
@@ -61,13 +69,7 @@ export class AppComponent implements OnInit {
 
   setRange(range: DateRange): void {
     this.selectedRange = range;
-  }
-
-  // chartData is a getter — Angular re-evaluates it automatically whenever
-  // selectedRange or data changes, like a computed signal or a pure pipe.
-  // This is the same concept as a selector in NgRx: derived state, not stored state.
-  get chartData(): RegimeDay[] {
-    const days = RANGE_TRADING_DAYS[this.selectedRange];
-    return isFinite(days) ? this.data.slice(-days) : this.data;
+    const days = RANGE_TRADING_DAYS[range];
+    this.chartData = isFinite(days) ? this.data.slice(-days) : this.data;
   }
 }
