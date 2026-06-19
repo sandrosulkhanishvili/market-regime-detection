@@ -1,43 +1,49 @@
 <aside class="panel">
-
   <!-- Current Regime Card -->
   <section class="regime-card" [style.border-color]="currentInfo.color">
-    <h3 class="card-title">Current Market Regime</h3>
-    <div class="regime-badge" [style.background]="currentInfo.color + '22'" [style.color]="currentInfo.color">
+    <h3 class="card-title">მიმდინარე საბაზრო რეჟიმი</h3>
+    <div
+      class="regime-badge"
+      [style.background]="currentInfo.color + '22'"
+      [style.color]="currentInfo.color"
+    >
       {{ currentInfo.label }}
     </div>
     <p class="regime-desc">{{ currentInfo.description }}</p>
     <div class="regime-stats">
       <div class="stat">
-        <span class="stat-label">Avg Daily Return</span>
-        <span class="stat-value" [style.color]="currentInfo.color">{{ currentInfo.avgReturn }}</span>
+        <span class="stat-label">საშუალო დღიური უკუგება</span>
+        <span class="stat-value" [style.color]="currentInfo.color">{{ liveReturn }}</span>
       </div>
       <div class="stat">
-        <span class="stat-label">Avg Volatility</span>
-        <span class="stat-value">{{ currentInfo.avgVolatility }}</span>
+        <span class="stat-label">საშუალო ვოლატილობა</span>
+        <span class="stat-value">{{ liveVolatility }}</span>
       </div>
     </div>
   </section>
 
   <!-- What is a Market Regime? -->
   <section class="info-block">
-    <h3>What is a Market Regime?</h3>
+    <h3>რა არის საბაზრო რეჟიმი?</h3>
     <p>
-      Financial markets don't behave the same way all the time. They switch between
-      distinct <strong>regimes</strong> — persistent states with different risk/return profiles.
-      Identifying the current regime helps investors adjust strategy: ride bull markets,
-      hedge in crises, and stay patient in sideways periods.
+      ფინანსური ბაზრები ყოველთვის ერთნაირად არ იქცევიან. ისინი გადადიან მკვეთრად
+      განსხვავებულ რეჟიმებში — მუდმივ მდგომარეობებში, რომლებსაც აქვთ რისკისა და
+      უკუგების (risk/return) განსხვავებული პროფილები. მიმდინარე
+      <strong> რეჟიმის </strong> იდენტიფიცირება ეხმარება ინვესტორებს სტრატეგიის
+      მორგებაში: გაჰყვნენ Bull ბაზრებს, მოახდინონ ჰეჯირება (hedge) კრიზისებში და
+      შეინარჩუნონ მოთმინება გვერდითი (sideways) მოძრაობების პერიოდებში.
     </p>
   </section>
 
   <!-- How does K-Means work? -->
   <section class="info-block">
-    <h3>How does K-Means find regimes?</h3>
+    <h3>როგორ პოულობს K-Means რეჟიმებს?</h3>
     <p>
-      Imagine plotting every trading day as a dot on a 2D chart: X = daily return,
-      Y = volatility. Days with similar behavior cluster together visually.
-      K-Means automates this: it places 3 "center points" (centroids) and assigns each
-      dot to its nearest center — no human labeling required.
+      წარმოიდგინეთ თითოეული სავაჭრო დღის 2D გრაფიკზე წერტილად ასახვა: X = დღიური
+      უკუგება, Y = ვოლატილობა. მსგავსი ქცევის მქონე დღეები ვიზუალურად ერთად
+      ჯგუფდება (cluster). K-Means ამ პროცესის ავტომატიზაციას ახდენს: ის სვამს 3
+      "ცენტრალურ წერტილს" (centroids) და თითოეულ წერტილს ანიჭებს უახლოეს ცენტრს
+      — ადამიანური ეტიკეტირების (labeling) გარეშე.
     </p>
     <div class="scatter-hint">
       <div class="dot-example bull">● Bull days</div>
@@ -48,7 +54,7 @@
 
   <!-- Pipeline Steps -->
   <section class="info-block">
-    <h3>The Pipeline — Step by Step</h3>
+    <h3>The Pipeline ნაბიჯ-ნაბიჯ</h3>
     <ol class="steps">
       <li *ngFor="let step of steps" class="step">
         <span class="step-icon">{{ step.icon }}</span>
@@ -59,5 +65,4 @@
       </li>
     </ol>
   </section>
-
 </aside>

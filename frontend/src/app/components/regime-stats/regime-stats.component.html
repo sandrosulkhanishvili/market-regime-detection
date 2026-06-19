@@ -1,35 +1,40 @@
 <section class="stats-panel">
-
   <h3 class="panel-heading">Regime Statistics</h3>
 
   <!-- Summary cards — one per regime -->
   <div class="summary-grid">
-    <div *ngFor="let s of summaries" class="summary-card"
-         [style.border-color]="regimeConfig[s.regime].color">
-      <div class="regime-dot" [style.background]="regimeConfig[s.regime].color"></div>
+    <div
+      *ngFor="let s of summaries"
+      class="summary-card"
+      [style.border-color]="regimeConfig[s.regime].color"
+    >
+      <div
+        class="regime-dot"
+        [style.background]="regimeConfig[s.regime].color"
+      ></div>
       <p class="regime-name" [style.color]="regimeConfig[s.regime].color">
         {{ regimeConfig[s.regime].label }}
       </p>
       <div class="summary-stats">
         <div class="stat-item">
           <span class="stat-val">{{ s.totalDays | number }}</span>
-          <span class="stat-lbl">Trading Days</span>
+          <span class="stat-lbl">სავაჭრო დღეები</span>
         </div>
         <div class="stat-item">
-          <span class="stat-val">{{ s.pctOfTime | number:'1.0-1' }}%</span>
-          <span class="stat-lbl">Of All Time</span>
+          <span class="stat-val">{{ s.pctOfTime | number: "1.0-1" }}%</span>
+          <span class="stat-lbl">სრული დროის %</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ s.periodCount }}</span>
-          <span class="stat-lbl">Occurrences</span>
+          <span class="stat-lbl">გამოვლენის სიხშირე</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ s.avgDuration }}d</span>
-          <span class="stat-lbl">Avg Duration</span>
+          <span class="stat-lbl">საშუალო ხანგრძლივობა</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ s.longestDuration }}d</span>
-          <span class="stat-lbl">Longest Run</span>
+          <span class="stat-lbl">ყველაზე ხანგრძლივი უწყვეტი ფაზა</span>
         </div>
       </div>
     </div>
@@ -37,7 +42,7 @@
 
   <!-- Notable periods table -->
   <div class="table-block">
-    <p class="table-heading">12 Longest Regime Periods</p>
+    <p class="table-heading">12 ყველაზე ხანგრძლივი რეჟიმის პერიოდი</p>
     <table>
       <thead>
         <tr>
@@ -51,19 +56,22 @@
       <tbody>
         <tr *ngFor="let p of topPeriods">
           <td>
-            <span class="badge"
+            <span
+              class="badge"
               [style.background]="regimeConfig[p.regime].color + '22'"
-              [style.color]="regimeConfig[p.regime].color">
+              [style.color]="regimeConfig[p.regime].color"
+            >
               {{ regimeConfig[p.regime].label }}
             </span>
           </td>
           <td>{{ p.startDate }}</td>
           <td>{{ p.endDate }}</td>
           <td>{{ p.durationDays }}</td>
-          <td [class]="returnClass(p.priceReturn)">{{ formatReturn(p.priceReturn) }}</td>
+          <td [class]="returnClass(p.priceReturn)">
+            {{ formatReturn(p.priceReturn) }}
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
-
 </section>

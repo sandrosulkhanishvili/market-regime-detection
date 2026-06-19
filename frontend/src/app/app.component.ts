@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { RegimeService } from './services/regime.service';
-import { RegimeDay } from './models/regime.model';
+import { RegimeDay, RegimeStatsMap } from './models/regime.model';
 import { RegimeChartComponent } from './components/regime-chart/regime-chart.component';
 import { RegimeTimelineComponent } from './components/regime-timeline/regime-timeline.component';
 import { EducationPanelComponent } from './components/education-panel/education-panel.component';
@@ -9,8 +10,6 @@ import { RegimeStatsComponent } from './components/regime-stats/regime-stats.com
 
 export type DateRange = '1D' | '1W' | '1M' | '6M' | '1Y' | '5Y' | 'MAX';
 
-// Approximate trading days per range label.
-// We slice the last N items from the sorted data array.
 const RANGE_TRADING_DAYS: Record<DateRange, number> = {
   '1D':  1,
   '1W':  5,
@@ -36,28 +35,31 @@ const RANGE_TRADING_DAYS: Record<DateRange, number> = {
 })
 export class AppComponent implements OnInit {
   data: RegimeDay[] = [];
+  regimeStats: RegimeStatsMap = {};
   loading = true;
   error = false;
   currentRegime = 1;
 
   readonly ranges: DateRange[] = ['1D', '1W', '1M', '6M', '1Y', '5Y', 'MAX'];
   selectedRange: DateRange = 'MAX';
-
-  // chartData is a plain property, NOT a getter.
-  // A getter calls .slice() and returns a new array reference on every change
-  // detection cycle, which causes RegimeChartComponent's ngOnChanges to fire
-  // continuously and destroy/rebuild the chart on every tick.
-  // As a plain property it only changes when we explicitly assign it.
   chartData: RegimeDay[] = [];
 
   constructor(private regimeService: RegimeService) {}
 
   ngOnInit(): void {
-    this.regimeService.getRegimes().subscribe({
-      next: (days) => {
+    // forkJoin fires both HTTP requests simultaneously and emits once when BOTH complete.
+    // This is RxJS's equivalent of Promise.all([req1, req2]).
+    // Without forkJoin we'd have to nest the calls (callback hell) or chain them
+    // sequentially, which would add unnecessary latency.
+    forkJoin({
+      days: this.regimeService.getRegimes(),
+      stats: this.regimeService.getRegimeStats(),
+    }).subscribe({
+      next: ({ days, stats }) => {
         this.data = days;
+        this.regimeStats = stats;
         this.currentRegime = days[days.length - 1].regime;
-        this.chartData = days; // initial view = MAX
+        this.chartData = days;
         this.loading = false;
       },
       error: () => {

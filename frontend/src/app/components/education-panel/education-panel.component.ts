@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { REGIME_CONFIG, RegimeInfo } from '../../models/regime.model';
+import { REGIME_CONFIG, RegimeInfo, RegimeStatsMap } from '../../models/regime.model';
 
 @Component({
   selector: 'app-education-panel',
@@ -10,39 +10,53 @@ import { REGIME_CONFIG, RegimeInfo } from '../../models/regime.model';
   styleUrl: './education-panel.component.scss',
 })
 export class EducationPanelComponent {
-  // Receives the current regime number from the parent (AppComponent),
-  // which gets it from RegimeChartComponent via (currentRegimeChange).
   @Input() currentRegime: number = 1;
+  @Input() regimeStats: RegimeStatsMap = {};
 
   get currentInfo(): RegimeInfo {
     return REGIME_CONFIG[this.currentRegime];
   }
 
+  // Formats a raw decimal (e.g. 0.01688) as a signed percentage string: "+1.69%"
+  formatPct(value: number | undefined, decimals = 2): string {
+    if (value === undefined) return '—';
+    const pct = (value * 100).toFixed(decimals);
+    return value >= 0 ? `+${pct}%` : `${pct}%`;
+  }
+
+  get liveReturn(): string {
+    return this.formatPct(this.regimeStats[this.currentRegime]?.avg_return);
+  }
+
+  get liveVolatility(): string {
+    return this.formatPct(this.regimeStats[this.currentRegime]?.avg_volatility);
+  }
+
   readonly steps = [
     {
-      title: '1. Fetch Price Data',
+      title: '1. ფასების მონაცემების ჩამოტვირთვა',
       icon: '📥',
-      detail: 'yfinance downloads daily S&P 500 closing prices back to 2000 — 6,600+ trading days.',
+      detail: 'yfinance იწერს S&P 500 ინდექსის ყოველდღიურ დახურვის ფასებს 2000 წლიდან — 6,600+ სავაჭრო დღე.',
     },
     {
-      title: '2. Engineer Features',
+      title: '2. მახასიათებლების ინჟინერია',
       icon: '⚙️',
-      detail: 'Two signals are derived per day: daily return (% price change) and 21-day rolling volatility (standard deviation of recent returns). These become the X and Y axes K-Means clusters on.',
+      detail: 'ყოველი დღისთვის გენერირდება ორი სიგნალი: დღიური უკუგება (% ფასის ცვლილება) და 21-დღიანი მოძრავი ვოლატილობა (ბოლოდროინდელი უკუგებების სტანდარტული გადახრა). ესენია ის X და Y ღერძები, რომლებზეც K-Means ახდენს კლასტერიზაციას.',
     },
     {
-      title: '3. Scale the Features',
+      title: '3. მონაცემთა მასშტაბირება',
       icon: '⚖️',
-      detail: 'StandardScaler normalizes both features to mean=0, std=1. Without this, volatility (small numbers) would be drowned out by price (large numbers) in distance calculations.',
+      detail: 'StandardScaler აკეთებს ორივე მახასიათებლის ნორმალიზაციას (mean=0, std=1). ამის გარეშე, ვოლატილობა (მცირე რიცხვები) უბრალოდ ჩაიკარგებოდა ფასის (დიდი რიცხვების) ფონზე მანძილის გამოთვლისას.',
     },
     {
-      title: '4. K-Means Clusters',
+      title: '4. K-Means კლასტერები',
       icon: '🎯',
-      detail: 'K-Means places 3 "centroids" in the 2D space and assigns each day to its nearest centroid. It repeats this until the assignments stabilize. The result: 3 groups with distinct personalities.',
+      detail: 'K-Means ათავსებს 3 ცენტრს (centroids) 2D სივრცეში და თითოეულ დღეს ანიჭებს მასთან ყველაზე ახლოს მდგომ ცენტრს. ეს პროცესი მეორდება მანამ, სანამ განაწილება არ დასტაბილურდება. შედეგი: 3 ჯგუფი მკვეთრად გამოხატული მახასიათებლებით.',
     },
     {
-      title: '5. Interpret & Visualize',
+      title: '5. ინტერპრეტაცია და ვიზუალიზაცია',
       icon: '📊',
-      detail: 'The numeric labels (0, 1, 2) are mapped to meaningful names by analyzing each cluster\'s average return and volatility. The chart line is colored per-segment using those labels.',
+      detail: 'რიცხვითი ეტიკეტები (0, 1, 2) უკავშირდება შინაარსობრივ სახელებს თითოეული კლასტერის საშუალო უკუგებისა და ვოლატილობის ანალიზის საფუძველზე. გრაფიკის ხაზი თითოეული სეგმენტისთვის სწორედ ამ ეტიკეტების მიხედვით იფერება.',
     },
   ];
 }

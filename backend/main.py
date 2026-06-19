@@ -47,6 +47,31 @@ def get_regimes():
     return cached_data.to_dict("records")
 
 
+# ── REGIME STATS ──────────────────────────────────────────────────────────────
+@app.get("/regime-stats")
+def get_regime_stats():
+    """
+    Returns per-regime averages computed from real data.
+    Response shape: { "0": { "avg_return": 0.0168, "avg_volatility": 0.019 }, ... }
+
+    .groupby("regime").mean() is like SQL GROUP BY + AVG — it collapses all rows
+    for each regime into a single summary row.
+    """
+    stats = (
+        cached_data
+        .groupby("regime")[["daily_return", "volatility_21d"]]
+        .mean()
+        .round(6)
+    )
+    result = {}
+    for regime, row in stats.iterrows():
+        result[str(regime)] = {
+            "avg_return": row["daily_return"],
+            "avg_volatility": row["volatility_21d"],
+        }
+    return result
+
+
 # ── HEALTH CHECK ──────────────────────────────────────────────────────────────
 @app.get("/health")
 def health_check():

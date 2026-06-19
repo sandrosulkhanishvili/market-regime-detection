@@ -9,7 +9,7 @@
   background: #0f172a;
   border: 1px solid #22c55e;
   border-radius: 12px;
-  padding: 16px;
+  padding: 16px 8px;
   transition: border-color 0.5s ease;
 }
 
@@ -28,7 +28,9 @@
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 10px;
-  transition: background 0.5s, color 0.5s;
+  transition:
+    background 0.5s,
+    color 0.5s;
 }
 
 .regime-desc {
@@ -81,7 +83,9 @@
     line-height: 1.6;
     margin: 0;
 
-    strong { color: #e2e8f0; }
+    strong {
+      color: #e2e8f0;
+    }
   }
 }
 
@@ -94,9 +98,15 @@
 }
 
 .dot-example {
-  &.bull   { color: #22c55e; }
-  &.normal { color: #3b82f6; }
-  &.bear   { color: #ef4444; }
+  &.bull {
+    color: #22c55e;
+  }
+  &.normal {
+    color: #3b82f6;
+  }
+  &.bear {
+    color: #ef4444;
+  }
 }
 
 // ── Pipeline Steps ───────────────────────────────────────────────────────────
