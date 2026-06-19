@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
+import { RegimeDay, RegimeInfo, DEFAULT_REGIME_CONFIG } from '../../models/regime.model';
 
 export interface RegimePeriod {
   regime: 0 | 1 | 2;
@@ -28,29 +28,24 @@ export interface RegimeSummary {
 })
 export class RegimeStatsComponent implements OnChanges {
   @Input() data: RegimeDay[] = [];
+  @Input() regimeConfig: Record<number, RegimeInfo> = DEFAULT_REGIME_CONFIG;
 
   summaries: RegimeSummary[] = [];
   topPeriods: RegimePeriod[] = [];
-
-  readonly regimeConfig = REGIME_CONFIG;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data.length) {
       const periods = this.computePeriods(this.data);
       this.summaries = this.computeSummaries(periods, this.data.length);
-      // Top 12 longest periods across all regimes
       this.topPeriods = [...periods]
         .sort((a, b) => b.durationDays - a.durationDays)
         .slice(0, 12);
     }
   }
 
-  // Run-length encoding: group consecutive days with the same regime.
-  // Like Array.reduce() that starts a new group whenever the key changes.
   private computePeriods(data: RegimeDay[]): RegimePeriod[] {
     const periods: RegimePeriod[] = [];
     let start = 0;
-
     for (let i = 1; i <= data.length; i++) {
       if (i === data.length || data[i].regime !== data[start].regime) {
         const slice = data.slice(start, i);

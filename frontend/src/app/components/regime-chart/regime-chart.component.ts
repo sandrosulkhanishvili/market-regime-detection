@@ -4,17 +4,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
-import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
+import { RegimeDay, RegimeInfo, DEFAULT_REGIME_CONFIG } from '../../models/regime.model';
 
 Chart.register(...registerables);
 
-// Adaptive sampling: show every point for short ranges, thin out for large ones.
-// Without this, 1W (5 points) would be sampled to 1-2 points and the chart
-// would render nearly empty.
 function sampleRate(n: number): number {
-  if (n <= 300)  return 1;   // 1D / 1W / 1M / 6M — show everything
-  if (n <= 1000) return 2;   // 1Y / 5Y partial
-  return 3;                  // 5Y full / MAX
+  if (n <= 300)  return 1;
+  if (n <= 1000) return 2;
+  return 3;
 }
 
 @Component({
@@ -27,34 +24,26 @@ function sampleRate(n: number): number {
 export class RegimeChartComponent implements OnChanges, AfterViewInit, OnDestroy {
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  // AppComponent now owns the data and passes it down.
-  // Think of this like a presentational (dumb) component in Angular:
-  // it only knows how to DISPLAY data, not fetch it.
   @Input() data: RegimeDay[] = [];
+  @Input() regimeConfig: Record<number, RegimeInfo> = DEFAULT_REGIME_CONFIG;
 
   private viewReady = false;
   private sampledData: RegimeDay[] = [];
   private chart: Chart | null = null;
 
-  readonly regimeConfig = REGIME_CONFIG;
-
-  // AfterViewInit fires when the canvas DOM element is ready.
-  // We set a flag so ngOnChanges knows it's safe to draw.
   ngAfterViewInit(): void {
     this.viewReady = true;
     if (this.sampledData.length) this.buildChart();
   }
 
-  // ngOnChanges fires whenever an @Input() value changes —
-  // like subscribing to an Observable of input values.
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data.length) {
       const rate = sampleRate(this.data.length);
       this.sampledData = this.data.filter((_, i) => i % rate === 0);
-      if (this.viewReady) {
-        this.chart?.destroy();
-        this.buildChart();
-      }
+    }
+    if (this.viewReady && this.sampledData.length) {
+      this.chart?.destroy();
+      this.buildChart();
     }
   }
 
@@ -70,7 +59,7 @@ export class RegimeChartComponent implements OnChanges, AfterViewInit, OnDestroy
 
     const segmentColor = (ctx: any): string => {
       const regime = this.sampledData[ctx.p0DataIndex]?.regime ?? 1;
-      return REGIME_CONFIG[regime].color;
+      return this.regimeConfig[regime]?.color ?? '#3b82f6';
     };
 
     this.chart = new Chart(this.canvasRef.nativeElement, {
@@ -98,9 +87,9 @@ export class RegimeChartComponent implements OnChanges, AfterViewInit, OnDestroy
               afterLabel: (item) => {
                 const day = this.sampledData[item.dataIndex];
                 if (!day) return '';
-                const info = REGIME_CONFIG[day.regime];
+                const info = this.regimeConfig[day.regime];
                 return [
-                  `Regime: ${info.label}`,
+                  `Regime: ${info?.label ?? day.regime}`,
                   `Return: ${(day.daily_return * 100).toFixed(2)}%`,
                   `Volatility: ${(day.volatility_21d * 100).toFixed(2)}%`,
                 ].join('\n');

@@ -21,7 +21,6 @@
 
     <section class="left-column">
 
-      <!-- Date range controls -->
       <div class="range-bar">
         <button
           *ngFor="let r of ranges"
@@ -32,21 +31,32 @@
         </button>
       </div>
 
-      <!-- Chart — receives only the filtered slice -->
       <div class="chart-section">
-        <app-regime-chart [data]="chartData"></app-regime-chart>
+        <app-regime-chart
+          [data]="chartData"
+          [regimeConfig]="regimeConfig">
+        </app-regime-chart>
       </div>
 
-      <!-- Timeline always shows full history for context -->
       <div class="timeline-section">
-        <app-regime-timeline [data]="data"></app-regime-timeline>
+        <app-regime-timeline
+          [data]="data"
+          [regimeConfig]="regimeConfig">
+        </app-regime-timeline>
       </div>
 
     </section>
 
     <aside class="right-column">
-      <app-education-panel [currentRegime]="currentRegime" [regimeStats]="regimeStats"></app-education-panel>
-      <app-regime-stats [data]="data"></app-regime-stats>
+      <app-education-panel
+        [currentRegime]="currentRegime"
+        [regimeStats]="regimeStats"
+        [regimeConfig]="regimeConfig">
+      </app-education-panel>
+      <app-regime-stats
+        [data]="data"
+        [regimeConfig]="regimeConfig">
+      </app-regime-stats>
     </aside>
 
   </main>

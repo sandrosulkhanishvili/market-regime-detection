@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
+import { RegimeDay, RegimeInfo, DEFAULT_REGIME_CONFIG } from '../../models/regime.model';
 
 @Component({
   selector: 'app-regime-timeline',
@@ -15,31 +15,25 @@ import { RegimeDay, REGIME_CONFIG } from '../../models/regime.model';
 })
 export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
   @ViewChild('timelineCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+
   @Input() data: RegimeDay[] = [];
+  @Input() regimeConfig: Record<number, RegimeInfo> = DEFAULT_REGIME_CONFIG;
 
   yearLabels: { label: string; pct: number }[] = [];
-
   private viewReady = false;
 
-  // ChangeDetectorRef lets us manually tell Angular "re-check this component now".
-  // We need this because ngAfterViewInit fires AFTER Angular's change detection pass,
-  // so any property changes made inside it would trigger NG0100 without this call.
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     this.viewReady = true;
     if (this.data.length) {
       this.draw();
-      // Explicitly run change detection so Angular sees yearLabels update
-      // without complaining that it changed after the check.
       this.cdr.detectChanges();
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] && this.data.length && this.viewReady) {
-      this.draw();
-    }
+    if (this.viewReady && this.data.length) this.draw();
   }
 
   @HostListener('window:resize')
@@ -66,7 +60,8 @@ export class RegimeTimelineComponent implements OnChanges, AfterViewInit {
     this.data.forEach((day, i) => {
       const x = (i / n) * w;
       const nextX = ((i + 1) / n) * w;
-      ctx.fillStyle = REGIME_CONFIG[day.regime].color + 'cc';
+      const color = this.regimeConfig[day.regime]?.color ?? '#3b82f6';
+      ctx.fillStyle = color + 'cc';
       ctx.fillRect(x, 0, Math.ceil(nextX - x), h);
     });
 

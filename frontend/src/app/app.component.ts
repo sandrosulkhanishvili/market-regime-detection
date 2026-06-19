@@ -2,22 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { RegimeService } from './services/regime.service';
-import { RegimeDay, RegimeStatsMap } from './models/regime.model';
+import { RegimeDay, RegimeInfo, RegimeStatsMap, DEFAULT_REGIME_CONFIG, buildRegimeConfig } from './models/regime.model';
 import { RegimeChartComponent } from './components/regime-chart/regime-chart.component';
 import { RegimeTimelineComponent } from './components/regime-timeline/regime-timeline.component';
 import { EducationPanelComponent } from './components/education-panel/education-panel.component';
 import { RegimeStatsComponent } from './components/regime-stats/regime-stats.component';
 
-export type DateRange = '1D' | '1W' | '1M' | '6M' | '1Y' | '5Y' | 'MAX';
+export type DateRange = '1W' | '1M' | '6M' | '1Y' | '5Y' | 'MAX';
 
 const RANGE_TRADING_DAYS: Record<DateRange, number> = {
-  '1D':  1,
-  '1W':  5,
-  '1M':  22,
-  '6M':  130,
-  '1Y':  252,
-  '5Y':  1260,
-  'MAX': Infinity,
+  '1W': 5,
+  '1M': 22,
+  '6M': 130,
+  '1Y': 252,
+  '5Y': 1260,
+  MAX: Infinity,
 };
 
 @Component({
@@ -36,11 +35,12 @@ const RANGE_TRADING_DAYS: Record<DateRange, number> = {
 export class AppComponent implements OnInit {
   data: RegimeDay[] = [];
   regimeStats: RegimeStatsMap = {};
+  regimeConfig: Record<number, RegimeInfo> = DEFAULT_REGIME_CONFIG;
   loading = true;
   error = false;
   currentRegime = 1;
 
-  readonly ranges: DateRange[] = ['1D', '1W', '1M', '6M', '1Y', '5Y', 'MAX'];
+  readonly ranges: DateRange[] = ['1W', '1M', '6M', '1Y', '5Y', 'MAX'];
   selectedRange: DateRange = 'MAX';
   chartData: RegimeDay[] = [];
 
@@ -58,6 +58,7 @@ export class AppComponent implements OnInit {
       next: ({ days, stats }) => {
         this.data = days;
         this.regimeStats = stats;
+        this.regimeConfig = buildRegimeConfig(stats);
         this.currentRegime = days[days.length - 1].regime;
         this.chartData = days;
         this.loading = false;
